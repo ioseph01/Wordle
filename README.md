@@ -1,2 +1,2 @@
 # Wordle
-A simple Wordle-like game
+A simple python Wordle-like game with Tkinter.
