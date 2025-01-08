@@ -1,9 +1,6 @@
 import tkinter as tk
 import random
 import pygame
-
-GOOD_SOUND = "FILE NAME HERE"
-FAIL_SOUND = "FILE NAME HERE"
 font = ("Franklin Gothic Demi", 10)
 
 
@@ -13,8 +10,10 @@ class Wordle:
         
         pygame.mixer.init()
         with open(fileName) as f:
-            lines = f.readlines()
-            self.chosen_word = [random.choice(lines).strip().upper()]
+            self.lines = [line.strip().upper() for line in f.readlines()]
+            self.chosen_word = [random.choice(self.lines).strip().upper()]
+        with open("guesses.txt") as f:
+            self.guesses = [line.strip().upper() for line in f.readlines()]
 
         self.window = tk.Tk()
         self.window.title("Wordle")
@@ -92,6 +91,8 @@ class Wordle:
             self.current = self.current[:len(self.current) - 1]
         
         elif len(self.current) == 5 and (letter == "ENTER" or letter == "RETURN"):
+            if self.current not in self.lines and self.current not in self.guesses:
+                return     
            
             for c in range(len(self.current)):
                 y,x = self.letterNumMap(self.current[c])
@@ -168,13 +169,13 @@ class Wordle:
     
         if guesses == True:
             self.score += 1
-            pygame.mixer.music.load(GOOD_SOUND)
+            pygame.mixer.music.load("duolingo-correct.mp3")
             self.streak.config(bg="darkgoldenrod1")
 
         else:
             self.score = 0      
             self.streak.config(bg="brown3")
-            pygame.mixer.music.load(FAIL_SOUND)
+            pygame.mixer.music.load("fail_sound.mp3")
             
 
     
@@ -188,5 +189,5 @@ class Wordle:
         self.window.mainloop()
 
 
-w = Wordle("WORD LIST FILE")
+w = Wordle("f.txt")
 w.run_game()
